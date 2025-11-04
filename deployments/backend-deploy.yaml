@@ -22,15 +22,30 @@ spec:
         - containerPort: 8080
         env:
         - name: SPRING_DATASOURCE_URL
-          value: jdbc:mysql://mysql:3306/employee_management
+          valueFrom:
+            configMapKeyRef:
+              key: SPRING_DATASOURCE_URL
+              name: app-config
         - name: SPRING_DATASOURCE_USERNAME
-          value: root
+          valueFrom:
+            configMapKeyRef:
+              key: SPRING_DATASOURCE_USERNAME
+              name: app-config
         - name: SPRING_DATASOURCE_PASSWORD
-          value: password
+          valueFrom:
+            secretKeyRef:
+              key: MYSQL_PASSWORD
+              name: db-secret
         - name: SPRING_DATA_MONGODB_URI
-          value: mongodb://mongodb:27017/employee_management
+          valueFrom:
+            configMapKeyRef:
+              key: SPRING_DATA_MONGODB_URI
+              name: app-config
         - name: SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT
-          value: org.hibernate.dialect.MySQL8Dialect
+          valueFrom:
+            configMapKeyRef:
+              key: SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT
+              name: app-config
         resources:
           requests:
             cpu: "300m"
