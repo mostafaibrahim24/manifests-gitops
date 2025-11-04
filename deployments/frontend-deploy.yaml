@@ -22,7 +22,7 @@ spec:
         - containerPort: 8080
         env:
         - name: REACT_APP_API_URL
-          value: http://192.168.49.2/api
+          value: http://192.168.49.2:32350/api
         resources:
           requests:
             cpu: "100m"
