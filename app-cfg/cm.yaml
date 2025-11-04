@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  REACT_APP_API_URL: http://192.168.49.2/api
+  STORAGE_CLASS_NAME: standard
+  MYSQL_DATABASE: employee_management
+  MYSQL_ROOT_USERNAME: root
+  MONGO_HOST: mongodb
+  MONGO_PORT: "27017"
+  SPRING_DATASOURCE_URL: "jdbc:mysql://mysql:3306/employee_management"
+  SPRING_DATA_MONGODB_URI: "mongodb://mongodb:27017/employee_management"
