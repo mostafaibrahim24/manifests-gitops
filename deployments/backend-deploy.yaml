@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: mostafaibrahim24/empl-backend
+        image: mostafaibrahim24/empl-backend:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
