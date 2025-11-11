@@ -73,6 +73,13 @@ spec:
           - name: tcp
             protocol: TCP
             containerPort: 9104
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "250m"
+            memory: "256Mi"
         args:
           - --mysqld.username=root:$MYSQL_ROOT_PASSWORD
           - --mysqld.address=127.0.0.1:3306
