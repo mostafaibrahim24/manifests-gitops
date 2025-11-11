@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: app-config
 data:
-  REACT_APP_API_URL: "http://192.168.49.2:32350"
+  REACT_APP_API_URL: "http://172.20.0.2/api"
   SPRING_DATASOURCE_USERNAME: "root"
   MYSQL_DATABASE: "employee_management"
   MYSQL_ROOT_USERNAME: "root"
