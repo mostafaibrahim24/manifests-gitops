@@ -55,8 +55,7 @@ spec:
         readinessProbe:
           exec:
             command:
-            - mongo
-            - --disableImplicitBSON
+            - mongosh
             - --eval
             - "db.adminCommand('ping')"
           initialDelaySeconds: 45
@@ -68,6 +67,12 @@ spec:
         args:
           - --mongodb.uri=mongodb://localhost:27017 
           - --web.listen-address=:9001
+        startupProbe:        
+          tcpSocket:
+            port: 27017
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          failureThreshold: 30
         ports:
         - containerPort: 9001
         resources:

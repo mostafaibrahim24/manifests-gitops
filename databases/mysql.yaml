@@ -76,6 +76,12 @@ spec:
         args:
           - --mysqld.username=root:$MYSQL_ROOT_PASSWORD
           - --mysqld.address=127.0.0.1:3306
+        startupProbe:               
+          tcpSocket:
+            port: 3306
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          failureThreshold: 30
         env:
           - name: MYSQL_ROOT_PASSWORD
             valueFrom:
