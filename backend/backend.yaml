@@ -45,6 +45,17 @@ spec:
               sleep 5
             done
             echo "MySQL is ready!"
+      - name: wait-for-mongo
+        image: mongo:6.0
+        command:
+          - sh
+          - -c
+          - |
+            until mongosh --host mongodb --eval "db.adminCommand('ping')" >/dev/null 2>&1; do
+              echo "Waiting for MongoDB..."
+              sleep 5
+            done
+            echo "MongoDB is ready!"
       containers:
       - name: backend
         image: mostafaibrahim24/empl-backend:7de8fde
