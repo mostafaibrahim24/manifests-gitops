@@ -16,3 +16,10 @@ spec:
       target:
         type: Utilization
         averageUtilization: 60
+  - type: Pods
+    pods:
+      metric:
+        name: process_cpu_usage
+      target:
+        type: AverageValue
+        averageValue: "0.6"
