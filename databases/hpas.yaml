@@ -42,3 +42,10 @@ spec:
       target:
         type: Utilization
         averageUtilization: 70
+  - type: Pods
+    pods:
+      metric:
+        name: mongodb_resident_memory_bytes
+      target:
+        type: AverageValue
+        averageValue: "500000000"
