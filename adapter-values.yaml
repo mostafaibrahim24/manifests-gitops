@@ -148,6 +148,51 @@ rules:
         matches: "^(.*)$"
         as: "mysql_avg_latency_seconds"
       metricsQuery: 'avg(rate(mysql_perf_schema_events_statements_sum_timer_wait[1m])) by (pod, namespace) / avg(rate(mysql_perf_schema_events_statements_sum_total[1m])) by (pod, namespace)'
+    # Nginx request rate (RPS) Frontend
+    - seriesQuery: 'nginx_http_requests_total'
+      resources:
+        overrides:
+          namespace: {resource: "namespace"}
+          pod: {resource: "pod"}
+      name:
+        matches: "^(.*)$"
+        as: "nginx_requests_per_second"
+      metricsQuery: 'sum(rate(nginx_http_requests_total[1m])) by (pod, namespace)'
+    - seriesQuery: 'process_resident_memory_bytes'
+      resources:
+        overrides:
+          namespace: {resource: "namespace"}
+          pod: {resource: "pod"}
+      name:
+        matches: "^(.*)$"
+        as: "mongodb_resident_memory_bytes"
+      metricsQuery: 'avg(process_resident_memory_bytes) by (pod, namespace)'
+
+
+    - seriesQuery: 'http_server_requests_seconds_count'
+      resources:
+        overrides:
+          namespace: {resource: "namespace"}
+          pod: {resource: "pod"}
+      name:
+        matches: "^(.*)$"
+        as: "http_requests_per_second"
+      metricsQuery: |
+        sum(rate(http_server_requests_seconds_count[1m])) by (pod, namespace)
+
+    # HTTP Average Latency (seconds) — all requests
+    - seriesQuery: 'http_server_requests_seconds_sum'
+      resources:
+        overrides:
+          namespace: {resource: "namespace"}
+          pod: {resource: "pod"}
+      name:
+        matches: "^(.*)$"
+        as: "http_avg_latency_seconds"
+      metricsQuery: |
+        sum(rate(http_server_requests_seconds_sum[1m])) by (pod, namespace)
+        /
+        sum(rate(http_server_requests_seconds_count[1m])) by (pod, namespace)
   # custom: []
     # - seriesQuery: '{__name__=~"^some_metric_count$"}'
     #   resources:
