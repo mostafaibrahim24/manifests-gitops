@@ -34,6 +34,10 @@ spec:
       labels:
         app: mysql
     spec:
+      volumes:
+      - name: mysql-config
+        configMap:
+          name: mysql-config
       containers:
       - name: mysql
         image: mysql:8.0
@@ -60,6 +64,9 @@ spec:
         volumeMounts:
         - name: mysql-persistent-storage
           mountPath: /var/lib/mysql
+        - name: mysql-config
+          mountPath: /etc/mysql/conf.d/my.cnf
+          subPath: my.cnf
         readinessProbe:
             exec:
               command: ["mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p$(MYSQL_ROOT_PASSWORD)"]
@@ -83,12 +90,23 @@ spec:
         args:
           - --mysqld.username=root:$MYSQL_ROOT_PASSWORD
           - --mysqld.address=127.0.0.1:3306
+          - --collect.global_status
+          - --collect.global_variables
+          - --collect.info_schema.tables
+          - --collect.perf_schema.tablelocks
+          - --collect.perf_schema.file_events
+          - --collect.perf_schema.eventswaits
+          - --collect.perf_schema.indexiowaits
+          - --collect.perf_schema.tableiowaits
+          - --collect.perf_schema.eventsstatements
+          - --collect.perf_schema.eventsstatementssum
         startupProbe:               
           tcpSocket:
             port: 3306
           initialDelaySeconds: 60
           periodSeconds: 10
           failureThreshold: 30
+        
         env:
           - name: MYSQL_ROOT_PASSWORD
             valueFrom:
@@ -97,36 +115,42 @@ spec:
                 key: MYSQL_ROOT_PASSWORD
           - name: DATA_SOURCE_NAME
             value: "root:$(MYSQL_ROOT_PASSWORD)@tcp(127.0.0.1:3306)/"
-          - name: collect.global_status
-            value: 'true'
-          - name: collect.info_schema.innodb_metrics
-            value: 'true'
-          - name: collect.auto_increment.columns
-            value: 'true'
-          - name: collect.info_schema.processlist
-            value: 'true'
-          - name: collect.binlog_size
-            value: 'true'
-          - name: collect.info_schema.tablestats
-            value: 'true'
-          - name: collect.global_variables
-            value: 'true'
-          - name: collect.info_schema.query_response_time
-            value: 'true'
-          - name: collect.info_schema.userstats
-            value: 'true'
-          - name: collect.info_schema.tables
-            value: 'true'
-          - name: collect.perf_schema.tablelocks
-            value: 'true'
-          - name: collect.perf_schema.file_events
-            value: 'true'
-          - name: collect.perf_schema.eventswaits
-            value: 'true'
-          - name: collect.perf_schema.indexiowaits
-            value: 'true'
-          - name: collect.perf_schema.tableiowaits
-            value: 'true'
+          # - name: collect.global_status
+          #   value: 'true'
+          # - name: collect.info_schema.innodb_metrics
+          #   value: 'true'
+          # - name: collect.auto_increment.columns
+          #   value: 'true'
+          # - name: collect.info_schema.processlist
+          #   value: 'true'
+          # - name: collect.binlog_size
+          #   value: 'true'
+          # - name: collect.info_schema.tablestats
+          #   value: 'true'
+          # - name: collect.global_variables
+          #   value: 'true'
+          # - name: collect.info_schema.query_response_time
+          #   value: 'true'
+          # - name: collect.info_schema.userstats
+          #   value: 'true'
+          # - name: collect.info_schema.tables
+          #   value: 'true'
+          # - name: collect.perf_schema.tablelocks
+          #   value: 'true'
+          # - name: collect.perf_schema.file_events
+          #   value: 'true'
+          # - name: collect.perf_schema.eventswaits
+          #   value: 'true'
+          # - name: collect.perf_schema.indexiowaits
+          #   value: 'true'
+          # - name: collect.perf_schema.tableiowaits
+          #   value: 'true'
+          # - name: collect.perf_schema.eventsstatements
+          #   value: 'true'
+          # - name: --collect.perf_schema.eventsstatementssum
+          #   value: 'true'
+          # - name: --collect.perf_schema.eventsstatementstypes
+          #   value: 'true'
   volumeClaimTemplates:
   - metadata:
       name: mysql-persistent-storage

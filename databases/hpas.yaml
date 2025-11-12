@@ -16,6 +16,13 @@ spec:
       target:
         type: Utilization
         averageUtilization: 70
+  - type: Pods
+    pods:
+      metric:
+        name: mysql_avg_latency_seconds
+      target:
+        type: AverageValue
+        averageValue: "0.02" # 20ms target latency
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
