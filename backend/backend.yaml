@@ -63,11 +63,32 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
-        envFrom:
-          - configMapRef:
+        env:
+        - name: SPRING_DATASOURCE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: SPRING_DATASOURCE_URL
               name: app-config
-          - secretRef:
+        - name: SPRING_DATASOURCE_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              key: SPRING_DATASOURCE_USERNAME
+              name: app-config
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: MYSQL_PASSWORD
               name: db-secret
+        - name: SPRING_DATA_MONGODB_URI
+          valueFrom:
+            configMapKeyRef:
+              key: SPRING_DATA_MONGODB_URI
+              name: app-config
+        - name: SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT
+          valueFrom:
+            configMapKeyRef:
+              key: SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT
+              name: app-config
         resources:
           requests:
             cpu: "300m"
