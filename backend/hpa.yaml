@@ -23,20 +23,17 @@ spec:
       target:
         type: AverageValue
         averageValue: "0.6"
-  # Scale on HTTP Request Rate (RPS)
   - type: Pods
     pods:
       metric:
         name: http_requests_per_second
       target:
         type: AverageValue
-        averageValue: "50"   # adjust from load tests
-
-    # Scale on Average HTTP Latency (optional)
+        averageValue: "50"
   - type: Pods
     pods:
       metric:
         name: http_avg_latency_seconds
       target:
         type: AverageValue
-        averageValue: "0.3"  # scale out if avg latency > 300ms
+        averageValue: "0.3"  # 300ms
