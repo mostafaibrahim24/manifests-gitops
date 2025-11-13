@@ -1,4 +1,33 @@
 apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mongo-sidecar
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: mongo-sidecar
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: mongo-sidecar
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: mongo-sidecar
+subjects:
+  - kind: ServiceAccount
+    name: mongo-sidecar
+    namespace: default
+
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: mongodb
@@ -25,6 +54,7 @@ metadata:
   labels:
     app: mongodb
 spec:
+  replicas: 2
   serviceName: mongodb
   selector:
     matchLabels:
@@ -34,11 +64,17 @@ spec:
       labels:
         app: mongodb
     spec:
+      serviceAccountName: mongo-sidecar
       containers:
       - name: mongodb
-        image: mongo:6.0
+        image: mongo:4.4
         ports:
         - containerPort: 27017
+        command:
+          - mongod
+          - "--replSet"
+          - rs0
+          - "--bind_ip_all"
         env:
         - name: MONGO_INITDB_DATABASE
           value: employee_management
@@ -55,13 +91,18 @@ spec:
         readinessProbe:
           exec:
             command:
-            - mongosh
+            - mongo
             - --eval
             - "db.adminCommand('ping')"
           initialDelaySeconds: 45
           periodSeconds: 10
           timeoutSeconds: 3
           failureThreshold: 3
+      - name: mongo-sidecar
+        image: cvallance/mongo-k8s-sidecar
+        env:
+          - name: MONGO_SIDECAR_POD_LABELS
+            value: "app=mongodb"
       - name: mongo-exporter
         image: percona/mongodb_exporter:0.47 
         args:
@@ -70,7 +111,7 @@ spec:
         startupProbe:        
           tcpSocket:
             port: 27017
-          initialDelaySeconds: 60
+          initialDelaySeconds: 60  
           periodSeconds: 10
           failureThreshold: 30
         ports:
@@ -89,4 +130,4 @@ spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:
         requests:
-          storage: 1Gi
+          storage: 5Gi

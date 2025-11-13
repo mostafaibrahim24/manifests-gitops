@@ -9,6 +9,6 @@ data:
   MYSQL_ROOT_USERNAME: "root"
   MONGO_HOST: "mongodb"
   MONGO_PORT: "27017"
-  SPRING_DATASOURCE_URL: "jdbc:mysql://mysql:3306/employee_management"
-  SPRING_DATA_MONGODB_URI: "mongodb://mongodb:27017/employee_management"
+  SPRING_DATASOURCE_URL: "jdbc:mysql://mysql-0.mysql:3306/employee_management"
+  SPRING_DATA_MONGODB_URI: "mongodb://mongodb-0.mongodb,mongodb-1.mongodb,mongodb-2.mongodb:27017/employee_management" #mongodb://mongo-0.mongo,mongo-1.mongo,mongo-2.mongo:27017/dbname\_?
   SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: "org.hibernate.dialect.MySQL8Dialect"

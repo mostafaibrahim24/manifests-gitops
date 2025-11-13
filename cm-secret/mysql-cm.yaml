@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+    app.kubernetes.io/name: mysql
+data:
+  primary.cnf: |
+    # Apply this config only on the primary.
+    [mysqld]
+    log-bin
+    performance_schema = ON
+    performance-schema-consumer-events-statements-current = ON
+    performance-schema-consumer-events-statements-history = ON
+    performance-schema-consumer-events-statements-history-long = ON    
+  replica.cnf: |
+    # Apply this config only on replicas.
+    [mysqld]
+    super-read-only
+    performance_schema = ON
+    performance-schema-consumer-events-statements-current = ON
+    performance-schema-consumer-events-statements-history = ON
+    performance-schema-consumer-events-statements-history-long = ON    
