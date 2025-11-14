@@ -88,16 +88,13 @@ spec:
       - name: mysql
         image: mysql:5.7
         env:
-          - name: MYSQL_ROOT_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: db-secret
-                key: MYSQL_ROOT_PASSWORD
           - name: MYSQL_DATABASE
             valueFrom:
               configMapKeyRef:
                 name: app-config
                 key: MYSQL_DATABASE
+          - name: MYSQL_ALLOW_EMPTY_PASSWORD
+            value: "1"
         ports:
         - name: mysql
           containerPort: 3306
@@ -118,16 +115,35 @@ spec:
             memory: "2Gi"
         livenessProbe:
           exec:
-            command: ["mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p$(MYSQL_ROOT_PASSWORD)"]
+            command: ["mysqladmin", "ping", "-uroot"]
           initialDelaySeconds: 30
           periodSeconds: 10
           timeoutSeconds: 5
         readinessProbe:
           exec:
-            command: ["mysql", "-uroot", "-p$(MYSQL_ROOT_PASSWORD)","-e", "SELECT 1"]
+            command: ["mysql", "-uroot","-e", "SELECT 1"]
           initialDelaySeconds: 5
           periodSeconds: 2
           timeoutSeconds: 1
+        lifecycle:
+          postStart:
+            exec:
+              command:
+                - sh
+                - -c
+                - |
+                  # Wait for MySQL to be ready, if this container is being run as an init or postStart hook
+                  until mysql -uroot -e "SELECT 1" >/dev/null 2>&1; do sleep 2; done
+
+                  if [[ "$HOSTNAME" == "mysql-0" ]]; then
+                      echo "Running initial root grants and DB creation..."
+                      mysql -uroot <<'EOF'
+                  CREATE USER IF NOT EXISTS 'root'@'%' IDENTIFIED BY '';
+                  GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
+                  FLUSH PRIVILEGES;
+                  CREATE DATABASE IF NOT EXISTS employee_management;
+                  EOF
+                  fi
       - name: xtrabackup
         image: gcr.io/google-samples/xtrabackup:1.0
         ports:
@@ -158,14 +174,13 @@ spec:
           # Check if we need to complete a clone by starting replication.
           if [[ -f change_master_to.sql.in ]]; then
             echo "Waiting for mysqld to be ready (accepting connections)"
-            until mysql -u root -p ${MYSQL_ROOT_PASSWORD} -e "SELECT 1"; do sleep 1; done
+            until mysql -u root -e "SELECT 1"; do sleep 1; done
 
             echo "Initializing replication from clone position"
             mysql  \
                   -e "$(<change_master_to.sql.in), \
                           MASTER_HOST='mysql-0.mysql', \
                           MASTER_USER='root', \
-                          MASTER_PASSWORD='${MYSQL_ROOT_PASSWORD}', \
                           MASTER_CONNECT_RETRY=10; \
                         START SLAVE;" || exit 1
             # In case of container restart, attempt this at-most-once.
@@ -201,7 +216,7 @@ spec:
             cpu: "250m"
             memory: "256Mi"
         args:
-          - --mysqld.username=root:$MYSQL_ROOT_PASSWORD
+          - --mysqld.username=root
           - --mysqld.address=127.0.0.1:3306
           - --collect.global_status
           - --collect.global_variables
@@ -221,13 +236,8 @@ spec:
           failureThreshold: 30
         
         env:
-          - name: MYSQL_ROOT_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: db-secret
-                key: MYSQL_ROOT_PASSWORD
           - name: DATA_SOURCE_NAME
-            value: "root:$(MYSQL_ROOT_PASSWORD)@tcp(127.0.0.1:3306)/"
+            value: "root@tcp(127.0.0.1:3306)/"
       volumes:
       - name: conf
         emptyDir: {}
