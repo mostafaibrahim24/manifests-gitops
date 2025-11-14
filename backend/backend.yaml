@@ -41,7 +41,7 @@ spec:
           - sh
           - -c
           - |
-            until mysql -h mysql -uroot -p"$MYSQL_ROOT_PASSWORD" -e 'SELECT 1;' >/dev/null 2>&1; do
+            until mysql -h mysql-0.mysql.default.svc.cluster.local -uroot -e 'SELECT 1;'; do
               echo "Waiting for MySQL..."
               sleep 5
             done
@@ -52,14 +52,14 @@ spec:
           - sh
           - -c
           - |
-            until mongosh --host mongodb --eval "db.adminCommand('ping')" >/dev/null 2>&1; do
+            until mongosh --host mongodb-0.mongodb.default.svc.cluster.local --eval "db.adminCommand('ping')" >/dev/null 2>&1; do
               echo "Waiting for MongoDB..."
               sleep 5
             done
             echo "MongoDB is ready!"
       containers:
       - name: backend
-        image: mostafaibrahim24/empl-backend:7de8fde
+        image: mostafaibrahim24/empl-backend:4e964ff
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -75,10 +75,7 @@ spec:
               key: SPRING_DATASOURCE_USERNAME
               name: app-config
         - name: SPRING_DATASOURCE_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              key: MYSQL_PASSWORD
-              name: db-secret
+          value: ""
         - name: SPRING_DATA_MONGODB_URI
           valueFrom:
             configMapKeyRef:
