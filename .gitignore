@@ -4,3 +4,6 @@ req.txt
 *kubeconfig*
 kube-prom-stack*
 test-rules*
+*.key
+adapter*
+loki*
