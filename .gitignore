@@ -2,3 +2,5 @@ cfg*
 bkp*
 req.txt
 *kubeconfig*
+kube-prom-stack*
+test-rules*
