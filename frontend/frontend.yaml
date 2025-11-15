@@ -38,7 +38,7 @@ spec:
             name: nginx-config
       containers:
       - name: frontend
-        image: mostafaibrahim24/empl-frontend:latest
+        image: mostafaibrahim24/empl-frontend:1a5aee6
         imagePullPolicy: Always
         ports:
         - containerPort: 8080

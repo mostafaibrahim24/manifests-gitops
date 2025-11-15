@@ -14,13 +14,15 @@ data:
     performance-schema-consumer-events-statements-current = ON
     performance-schema-consumer-events-statements-history = ON
     performance-schema-consumer-events-statements-history-long = ON 
+    
     general_log = 1
-    log_output = FILE
-    general_log_file = /var/log/mysql/mysql.log
-
+    log_output = TABLE
+    log_error = /dev/stderr
+    
     slow_query_log = 1
-    slow_query_log_file = /var/log/mysql/slow.log
-    long_query_time = 2   
+    slow_query_log_file = /dev/stdout
+    long_query_time = 2
+    
   replica.cnf: |
     # Apply this config only on replicas.
     [mysqld]
@@ -29,10 +31,11 @@ data:
     performance-schema-consumer-events-statements-current = ON
     performance-schema-consumer-events-statements-history = ON
     performance-schema-consumer-events-statements-history-long = ON   
+    
     general_log = 1
-    log_output = FILE
-    general_log_file = /var/log/mysql/mysql.log
-
+    log_output = TABLE
+    log_error = /dev/stderr
+    
     slow_query_log = 1
-    slow_query_log_file = /var/log/mysql/slow.log
-    long_query_time = 2 
+    slow_query_log_file = /dev/stdout
+    long_query_time = 2

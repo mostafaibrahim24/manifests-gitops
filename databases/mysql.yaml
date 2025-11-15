@@ -76,7 +76,7 @@ spec:
       app: mysql
       app.kubernetes.io/name: mysql
   serviceName: mysql
-  replicas: 3
+  replicas: 2
   template:
     metadata:
       labels:
@@ -111,7 +111,9 @@ spec:
           mountPath: /mnt/config-map
       
       - name: clone-mysql
-        image: gcr.io/google-samples/xtrabackup:1.0
+        # image: gcr.io/google-samples/xtrabackup:1.0
+        image: mostafaibrahim24/xtrabackup:5.7 
+        imagePullPolicy: Always # This is where you specify the policy
         command:
         - bash
         - "-c"
@@ -153,7 +155,7 @@ spec:
             kubectl label pod $HOSTNAME mysql-role=replica --overwrite=true
           fi
         resources:
-          limits:
+          requests:
             cpu: 100m
             memory: 10Mi
       containers:
@@ -178,6 +180,8 @@ spec:
           mountPath: /etc/mysql/conf.d
         - name: mysql-socket
           mountPath: /var/run/mysqld
+        - name: mysql-logs
+          mountPath: /var/log/mysql
         resources:
           requests:
             cpu: 500m
@@ -217,17 +221,18 @@ spec:
                   EOF
                   fi
       - name: xtrabackup
-        image: gcr.io/google-samples/xtrabackup:1.0
+        # image: gcr.io/google-samples/xtrabackup:1.0
+        image: mostafaibrahim24/xtrabackup:5.7 
         ports:
         - name: xtrabackup
           containerPort: 3307
+        imagePullPolicy: Always # This is where you specify the policy
         command:
         - bash
         - "-c"
         - |
           set -ex
           cd /var/lib/mysql
-
           # Determine binlog position of cloned data, if any.
           if [[ -f xtrabackup_slave_info && "x$(<xtrabackup_slave_info)" != "x" ]]; then
             # XtraBackup already generated a partial "CHANGE MASTER TO" query
@@ -318,6 +323,9 @@ spec:
           name: mysql
       - name: mysql-socket
         emptyDir: {}
+      - name: mysql-logs
+        emptyDir: {}   # for promtail
+
   volumeClaimTemplates:
   - metadata:
       name: data

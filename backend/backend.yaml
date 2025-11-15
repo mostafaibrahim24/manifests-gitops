@@ -59,7 +59,7 @@ spec:
             echo "MongoDB is ready!"
       containers:
       - name: backend
-        image: mostafaibrahim24/empl-backend:4e964ff
+        image: mostafaibrahim24/empl-backend:6e80696
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
