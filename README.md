@@ -35,17 +35,24 @@ Kubernetes manifests repository for GitOps-managed resources, including gateway 
 - MySQL dual-service pattern - Headless mysql service for primary discovery and direct pod access, separate mysql-read headless service with mysql-role: replica selector for read-only traffic distribution across replicas
 - Headless services for databases - Direct pod discovery via DNS, enabling StatefulSet stable network identities, client-side load balancing, and peer-to-peer replication coordination
 
-### Metrics Collection
+### Metrics and Logs Collection
 <img width="60" height="1200" alt="image" src="https://github.com/user-attachments/assets/4bdc3847-779e-4eb5-a127-0f1104e9e397" />
+<img width="60" height="500" alt="image" src="https://github.com/user-attachments/assets/4069cdec-ad62-4778-9979-c6c13da787ed" />
+<img width="60" height="512" alt="image" src="https://github.com/user-attachments/assets/4ae4a00e-b10c-46ba-b479-e8fcb911194b" />
 
-- Prometheus metrics exposure - endpoints on application services, dedicated exporter sidecars for database observability providing query performance, replication lag, and resource utilization metrics
+
+- Prometheus metrics exposure - endpoints on application services, dedicated exporter sidecars for database observability providing performance and resource utilization metrics
 - ServiceMonitors for declarative scraping - Custom resources automatically configure Prometheus target discovery and scrape intervals per service, eliminating manual Prometheus configuration
-
+- Centralized log aggregation with Loki stack - Promtail agents deployed as DaemonSet on each node scrape container logs and ship to Loki for efficient storage and querying, unified with metrics in Grafana for correlated observability
+  
 ### Multi-dimensional horizontal pod scaling strategy
+<img width="60" height="125" alt="image" src="https://github.com/user-attachments/assets/b9af2812-ecb0-41ac-a886-d3e0e1d00dbd" /> </br>
 HPAs consume both standard metrics (pod CPU/memory) and application-aware custom metrics via Prometheus Adapter, enabling scaling decisions based on actual user experience and system behavior rather than infrastructure utilization alone.</br>
 So for example, Application latencies (user experience-driven scaling), Requests per second (traffic-based scaling), Process-level CPU (more accurate than container CPU) and Database query latencies (backend performance-driven scaling).
 
 ### Security
+<img width="60" height="512" alt="image" src="https://github.com/user-attachments/assets/c5267aa9-7c8a-42bc-b2d4-61bf244664e4" />
+
 - **Network policies** enforcing microsegmentation with explicit ingress/egress rules - default-deny posture ensuring only required service-to-service communication paths are permitted
 - **Sealed Secrets** enabling secrets to be encrypted with cluster public key stored in Git, decrypted at runtime by controller with private key inaccessible outside the cluster.
 - **Falco** monitors container runtime behavior for security anomalies and detects suspicious activities like privilege escalations and unauthorized file access, configured to alert on slack channel
