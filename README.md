@@ -46,6 +46,7 @@ Kubernetes manifests repository for GitOps-managed resources, including gateway 
 - Centralized log aggregation with Loki stack - Promtail agents deployed as DaemonSet on each node scrape container logs and ship to Loki for efficient storage and querying, unified with metrics in Grafana for correlated observability
   
 ### Multi-dimensional horizontal pod scaling strategy
+<img width="60" height="1200" alt="image" src="https://github.com/user-attachments/assets/4bdc3847-779e-4eb5-a127-0f1104e9e397" />
 <img width="60" height="125" alt="image" src="https://github.com/user-attachments/assets/b9af2812-ecb0-41ac-a886-d3e0e1d00dbd" /> </br>
 HPAs consume both standard metrics (pod CPU/memory) and application-aware custom metrics via Prometheus Adapter, enabling scaling decisions based on actual user experience and system behavior rather than infrastructure utilization alone.</br>
 So for example, Application latencies (user experience-driven scaling), Requests per second (traffic-based scaling), Process-level CPU (more accurate than container CPU) and Database query latencies (backend performance-driven scaling).
