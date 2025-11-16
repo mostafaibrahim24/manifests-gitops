@@ -53,6 +53,8 @@ So for example, Application latencies (user experience-driven scaling), Requests
 
 ### Security
 <img width="60" height="512" alt="image" src="https://github.com/user-attachments/assets/c5267aa9-7c8a-42bc-b2d4-61bf244664e4" />
+<img width="60" height="234" alt="image" src="https://github.com/user-attachments/assets/176a36bd-b16c-4d96-931d-5d4990d2d675" />
+<img width="80" height="1200" alt="image" src="https://github.com/user-attachments/assets/b9328fd6-ecbc-4199-995a-858900865dc1" />
 
 - **Network policies** enforcing microsegmentation with explicit ingress/egress rules - default-deny posture ensuring only required service-to-service communication paths are permitted
 - **Sealed Secrets** enabling secrets to be encrypted with cluster public key stored in Git, decrypted at runtime by controller with private key inaccessible outside the cluster.
