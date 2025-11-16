@@ -6,7 +6,7 @@
 
 Kubernetes manifests repository for GitOps-managed resources, including gateway resource, routes, application deployments, stateful databases, horizontal pod-autoscaling configurations, prometheus target discovery, configs, secrets (sealed) and network policies.
 </br>
-## K8s Cluster
+## K8s Cluster Diagram
 <img width="1665" height="775" alt="image" src="https://github.com/user-attachments/assets/be6cc0c0-512e-4fac-967b-fee6ff032c07" />
 
 
